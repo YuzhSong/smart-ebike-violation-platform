@@ -2,8 +2,8 @@
 const menuItems = [
   { label: '个人中心', to: '/user' },
   { label: '我的违法记录', to: '/user/violations' },
-  { label: '处罚说明', to: '/user' },
-  { label: '申诉服务', to: '/user/violations' },
+  { label: '处罚说明', to: '/user/penalty' },
+  { label: '申诉服务', to: '/user/appeal' },
   { label: '返回首页', to: '/' },
 ];
 </script>

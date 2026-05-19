@@ -46,6 +46,7 @@ function logout() {
       <header class="admin-topbar">
         <strong>监管后台</strong>
         <div class="admin-topbar-right">
+          <router-link class="btn-secondary" to="/">返回首页</router-link>
           <span>当前身份：管理员</span>
           <span>{{ timeText }}</span>
           <button class="btn-secondary" @click="logout">退出登录</button>

@@ -4,6 +4,8 @@ import LoginView from '../views/LoginView.vue';
 import UserHomeView from '../views/user/UserHomeView.vue';
 import UserViolationsView from '../views/user/UserViolationsView.vue';
 import UserViolationDetailView from '../views/user/UserViolationDetailView.vue';
+import UserPenaltyView from '../views/user/UserPenaltyView.vue';
+import UserAppealView from '../views/user/UserAppealView.vue';
 import AdminDashboardView from '../views/admin/AdminDashboardView.vue';
 import AdminViolationsView from '../views/admin/AdminViolationsView.vue';
 import AdminViolationDetail from '../views/admin/AdminViolationDetail.vue';
@@ -18,6 +20,8 @@ const routes = [
   { path: '/user', component: UserHomeView },
   { path: '/user/violations', component: UserViolationsView },
   { path: '/user/violation/:id', component: UserViolationDetailView },
+  { path: '/user/penalty', component: UserPenaltyView },
+  { path: '/user/appeal', component: UserAppealView },
   { path: '/admin', component: AdminDashboardView },
   { path: '/admin/violations', component: AdminViolationsView },
   { path: '/admin/violations/:id', component: AdminViolationDetail },
