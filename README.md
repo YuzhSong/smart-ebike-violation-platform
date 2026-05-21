@@ -8,8 +8,30 @@
 
 ## 系统模块
 
-- `frontend`：Vue3 + Vite 前端
-- `backend`：Spring Boot 后端
-- `model-service`：Python YOLOv8 模型服务
-- `database`：MySQL 建表与初始化数据
-- `docs`：接口文档和开发说明
+- `frontend`：Vue3 + Vite 前端。
+- `backend`：Spring Boot 后端，当前仍是占位状态，待初始化完整工程。
+- `model-service`：Python YOLOv8 模型服务。
+- `database`：MySQL 建表与初始化数据。
+- `docs`：产品说明、接口契约、协作规范和部署说明。
+
+## 文档入口
+
+开发前请先阅读：
+
+1. `docs/README.md`：文档入口和阅读顺序。
+2. `docs/collaboration.md`：协作边界和修改规则。
+3. `docs/product.md`：产品目标、用户角色和核心流程。
+4. `docs/architecture.md`：模块职责和调用链路。
+5. `docs/api.md`：接口契约。
+6. `docs/backend-requirements.md`：后端开发需求、接口实现和验收标准。
+7. `docs/database-design.md`：数据库表结构、字段含义和入库规则。
+8. `docs/deployment.md`：本地启动和联调说明。
+
+使用 Codex 辅助开发时，请阅读 `docs/ai-codex-prompt.md`。
+
+## 当前状态
+
+- 前端目录已存在，可按 `docs/deployment.md` 启动。
+- 模型服务目录已存在，可按 `docs/deployment.md` 启动。
+- 数据库脚本已存在，可按 `database/README.md` 和 `docs/deployment.md` 初始化。
+- 后端目录当前尚未初始化完整 Spring Boot 工程。
