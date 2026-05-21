@@ -13,5 +13,5 @@
 - 计划技术栈：
     - `Java 17`
     - `Spring Boot 3`
-    - `MyBatis-Plus`
+    - `Spring Data JPA`
     - `MySQL`

@@ -24,7 +24,7 @@ public class DeviceReportController {
     @PostMapping("/report")
     public ApiResponse<DeviceReportResultDto> report(
             @RequestParam("deviceCode") String deviceCode,
-            @RequestParam(value = "captureTime", required = false)
+            @RequestParam("captureTime")
             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime captureTime,
             @RequestParam("image") MultipartFile image
     ) {

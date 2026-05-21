@@ -46,11 +46,14 @@ public class ViolationEvent {
     @Column(length = 255)
     private String bbox;
 
+    @Column(name = "model_result", columnDefinition = "TEXT")
+    private String modelResult;
+
     @Column(name = "image_url", length = 255)
     private String imageUrl;
 
-    @Column(name = "reviewed_at")
-    private LocalDateTime reviewedAt;
+    @Column(name = "review_time")
+    private LocalDateTime reviewTime;
 
     @Column(name = "updated_at", insertable = false, updatable = false)
     private LocalDateTime updatedAt;
@@ -126,6 +129,14 @@ public class ViolationEvent {
         this.bbox = bbox;
     }
 
+    public String getModelResult() {
+        return modelResult;
+    }
+
+    public void setModelResult(String modelResult) {
+        this.modelResult = modelResult;
+    }
+
     public String getImageUrl() {
         return imageUrl;
     }
@@ -134,11 +145,11 @@ public class ViolationEvent {
         this.imageUrl = imageUrl;
     }
 
-    public LocalDateTime getReviewedAt() {
-        return reviewedAt;
+    public LocalDateTime getReviewTime() {
+        return reviewTime;
     }
 
-    public void setReviewedAt(LocalDateTime reviewedAt) {
-        this.reviewedAt = reviewedAt;
+    public void setReviewTime(LocalDateTime reviewTime) {
+        this.reviewTime = reviewTime;
     }
 }

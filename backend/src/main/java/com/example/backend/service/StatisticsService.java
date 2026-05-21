@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.StatisticsDto;
+import com.example.backend.dto.StatusCountDto;
 import com.example.backend.dto.TypeCountDto;
 import com.example.backend.repository.ViolationEventRepository;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ public class StatisticsService {
         List<TypeCountDto> typeDistribution = violationEventRepository.countByTypeBetween(start, end).stream()
                 .map(item -> new TypeCountDto(item.getType(), item.getCount()))
                 .toList();
-        return new StatisticsDto(total, today, typeDistribution);
+        List<StatusCountDto> statusDistribution = violationEventRepository.countByStatusBetween(start, end).stream()
+                .map(item -> new StatusCountDto(item.getStatus(), item.getCount()))
+                .toList();
+        return new StatisticsDto(total, today, typeDistribution, statusDistribution);
     }
 }

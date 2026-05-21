@@ -22,8 +22,22 @@ public interface ViolationEventRepository extends JpaRepository<ViolationEvent, 
             """)
     List<TypeCountProjection> countByTypeBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
+    @Query("""
+            select v.status as status, count(v) as count
+            from ViolationEvent v
+            where v.eventTime between :start and :end
+            group by v.status
+            """)
+    List<StatusCountProjection> countByStatusBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
     interface TypeCountProjection {
         String getType();
+
+        long getCount();
+    }
+
+    interface StatusCountProjection {
+        String getStatus();
 
         long getCount();
     }

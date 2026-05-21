@@ -28,7 +28,7 @@ public class ViolationCommandService {
         event.setStatus(status);
         event.setRemark(remark);
         if ("CONFIRMED".equals(status) || "REJECTED".equals(status)) {
-            event.setReviewedAt(LocalDateTime.now());
+            event.setReviewTime(LocalDateTime.now());
         }
         violationEventRepository.save(event);
         return true;
