@@ -14,3 +14,7 @@ INSERT INTO violation_event (user_id, device_id, violation_type, event_time, sta
 (1, 1, '未佩戴头盔', NOW() - INTERVAL 1 DAY, 'PENDING', '/images/event_001.jpg'),
 (1, 2, '闯红灯', NOW() - INTERVAL 12 HOUR, 'REVIEWING', '/images/event_002.jpg'),
 (NULL, 1, '逆行', NOW() - INTERVAL 2 HOUR, 'CONFIRMED', '/images/event_003.jpg');
+
+UPDATE violation_event
+SET remark = '审核通过', reviewed_at = NOW() - INTERVAL 1 HOUR
+WHERE status = 'CONFIRMED';
