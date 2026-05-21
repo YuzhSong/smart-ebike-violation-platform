@@ -21,7 +21,7 @@ onMounted(async () => {
 <template>
   <UserLayout>
     <div class="inner-page">
-      <PageHeader title="用户服务中心" :links="[{ label: '返回首页', to: '/' }]" />
+      <PageHeader title="用户服务中心" :links="[]" />
       <section class="panel">
         <h3>欢迎您，{{ user.name || '-' }}</h3>
         <p class="muted-text">非机动车违法查询与处理服务</p>

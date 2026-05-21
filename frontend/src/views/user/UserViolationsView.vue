@@ -37,7 +37,7 @@ function handleAppeal(row) {
 <template>
   <UserLayout>
     <div class="inner-page">
-      <PageHeader title="我的违法记录" :links="[{ label: '用户首页', to: '/user' }, { label: '返回首页', to: '/' }]" />
+      <PageHeader title="我的违法记录" :links="[{ label: '用户首页', to: '/user' }]" />
       <section class="panel">
         <ViolationTable :columns="columns" :rows="rows" @view="handleView" @appeal="handleAppeal" />
       </section>

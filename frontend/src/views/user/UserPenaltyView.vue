@@ -6,7 +6,7 @@ import UserLayout from '../../components/layout/UserLayout.vue';
 <template>
   <UserLayout>
     <div class="inner-page">
-      <PageHeader title="处罚说明" :links="[{ label: '用户首页', to: '/user' }, { label: '返回首页', to: '/' }]" />
+      <PageHeader title="处罚说明" :links="[{ label: '用户首页', to: '/user' }]" />
       <section class="panel">
         <h3>处罚标准说明</h3>
         <ul>

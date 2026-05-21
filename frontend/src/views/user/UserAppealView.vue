@@ -11,7 +11,7 @@ const violationId = computed(() => route.query.violationId || '');
 <template>
   <UserLayout>
     <div class="inner-page">
-      <PageHeader title="申诉服务" :links="[{ label: '我的违法记录', to: '/user/violations' }, { label: '返回首页', to: '/' }]" />
+      <PageHeader title="申诉服务" :links="[{ label: '我的违法记录', to: '/user/violations' }, { label: '用户首页', to: '/user' }]" />
       <section v-if="violationId" class="panel appeal-target">
         <h3>当前申诉记录</h3>
         <p>违法编号：<strong>{{ violationId }}</strong></p>
