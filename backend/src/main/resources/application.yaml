@@ -1,11 +1,11 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/traffic_platform?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
-    username: root
-    password: 123456
+    url: ${DB_URL:jdbc:mysql://localhost:3306/traffic_platform?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_general_ci&serverTimezone=Asia/Shanghai}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -20,5 +20,5 @@ spring:
       max-request-size: 10MB
 
 app:
-  upload-dir: uploads
-  model-service-url: http://localhost:8000/detect
+  upload-dir: ${UPLOAD_DIR:uploads}
+  model-service-url: ${MODEL_SERVICE_URL:http://localhost:8000/detect}

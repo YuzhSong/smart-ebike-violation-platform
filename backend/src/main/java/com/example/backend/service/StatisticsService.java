@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.dto.StatisticsDto;
 import com.example.backend.dto.StatusCountDto;
 import com.example.backend.dto.TypeCountDto;
+import com.example.backend.exception.BizException;
 import com.example.backend.repository.ViolationEventRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,18 @@ public class StatisticsService {
         this.violationEventRepository = violationEventRepository;
     }
 
+    /**
+     * 统计指定日期范围内的违法总量、今日数量、类型分布和状态分布。
+     *
+     * @param startDate 开始日期，可为空，默认最近 30 天
+     * @param endDate 结束日期，可为空，默认今天
+     * @return 统计结果
+     * @throws BizException endDate 早于 startDate 时抛出
+     */
     public StatisticsDto get(LocalDate startDate, LocalDate endDate) {
+        if (startDate != null && endDate != null && endDate.isBefore(startDate)) {
+            throw new BizException(400, "endDate must not be before startDate");
+        }
         LocalDateTime start = startDate == null ? LocalDate.now().minusDays(30).atStartOfDay() : startDate.atStartOfDay();
         LocalDateTime end = endDate == null ? LocalDate.now().plusDays(1).atStartOfDay() : endDate.plusDays(1).atStartOfDay();
         long total = violationEventRepository.countByEventTimeBetween(start, end);

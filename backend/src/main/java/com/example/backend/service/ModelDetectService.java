@@ -35,6 +35,13 @@ public class ModelDetectService {
         this.modelServiceUrl = modelServiceUrl;
     }
 
+    /**
+     * 调用模型服务 /detect，并把模型返回的 JSON 转换成后端可落库的识别结果。
+     *
+     * @param image 待识别图片
+     * @return 第一条识别结果和模型原始响应
+     * @throws BizException 图片读取失败、模型服务不可用或返回结果不符合契约时抛出
+     */
     public DetectResult detect(MultipartFile image) {
         try {
             ByteArrayResource fileResource = new ByteArrayResource(image.getBytes()) {
@@ -66,6 +73,7 @@ public class ModelDetectService {
         }
     }
 
+    // 中文注释：当前后端只取第一条检测结果入库，因此这里校验 result[0] 的必需字段。
     private DetectResult parse(String rawResponse) throws IOException {
         JsonNode root = objectMapper.readTree(rawResponse);
         JsonNode resultArray = root.path("result");

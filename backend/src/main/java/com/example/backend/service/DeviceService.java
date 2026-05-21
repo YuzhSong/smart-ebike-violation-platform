@@ -15,6 +15,13 @@ public class DeviceService {
         this.deviceInfoRepository = deviceInfoRepository;
     }
 
+    /**
+     * 查询设备列表，可按设备状态和设备编号/点位关键字过滤。
+     *
+     * @param status 设备状态，可为空
+     * @param keyword 设备编号或安装点位关键字，可为空
+     * @return 设备列表
+     */
     public List<DeviceDto> list(String status, String keyword) {
         return deviceInfoRepository.findAll().stream()
                 .filter(device -> status == null || status.isBlank() || status.equals(device.getStatus()))
