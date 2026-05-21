@@ -117,6 +117,39 @@ a { text-decoration: none; color: inherit; }
 }
 .info-grid { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: 10px; }
 .detail-block { margin-bottom: 12px; }
+.detail-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+.detail-action-bar span {
+  margin-left: 8px;
+  color: #5f7590;
+  font-size: 14px;
+}
+.appeal-target { margin-bottom: 12px; }
+.appeal-target p { margin: 0; }
+.appeal-summary-grid { display: grid; grid-template-columns: repeat(2, minmax(220px, 1fr)); gap: 8px; }
+.appeal-form-grid { display: grid; grid-template-columns: repeat(2, minmax(260px, 1fr)); gap: 10px; }
+.appeal-form-grid label { display: grid; gap: 6px; color: #214e81; font-size: 14px; }
+.appeal-form-grid input,
+.appeal-form-grid select,
+.appeal-form-grid textarea {
+  width: 100%;
+  border: 1px solid #c2d3e8;
+  background: #fff;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 14px;
+}
+.appeal-form-full { grid-column: 1 / -1; }
+.confirm-row { display: flex; align-items: center; gap: 8px; margin: 12px 0 6px; color: #234f7e; font-size: 14px; }
+.form-error { margin: 0; color: #b42318; font-size: 12px; }
 .evidence-card { border: 1px solid #d7e1f0; background: #f8fbff; }
 .evidence-head { background: #edf3fb; color: #1f4c80; font-size: 13px; padding: 8px 10px; border-bottom: 1px solid #d7e1f0; }
 .evidence-image { width: 100%; display: block; height: auto; min-height: 220px; object-fit: cover; }
@@ -208,4 +241,7 @@ a { text-decoration: none; color: inherit; }
   .admin-main-shell { grid-template-rows: auto 1fr; }
   .login-card { width: min(90vw, 380px); margin: 24px 0; }
   .admin-form-grid { grid-template-columns: 1fr; }
+  .appeal-form-grid, .appeal-summary-grid { grid-template-columns: 1fr; }
+  .detail-action-bar { align-items: flex-start; flex-direction: column; }
+  .detail-action-bar span { display: block; margin: 4px 0 0; }
 }

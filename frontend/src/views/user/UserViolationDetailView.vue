@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { getViolationDetail } from '../../api/violation';
 import PageHeader from '../../components/common/PageHeader.vue';
 import StatusTag from '../../components/common/StatusTag.vue';
@@ -9,17 +9,29 @@ import TimelinePanel from '../../components/common/TimelinePanel.vue';
 import UserLayout from '../../components/layout/UserLayout.vue';
 
 const route = useRoute();
+const router = useRouter();
 const detail = ref(null);
 
 onMounted(async () => {
   detail.value = await getViolationDetail(route.params.id);
 });
+
+function handleAppeal() {
+  router.push({ path: '/user/appeal/create', query: { violationId: route.params.id } });
+}
 </script>
 
 <template>
   <UserLayout>
     <div class="inner-page" v-if="detail">
       <PageHeader title="违法详情" :links="[{ label: '返回记录列表', to: '/user/violations' }]" />
+      <section class="detail-action-bar">
+        <div>
+          <strong>对本条违法记录有异议？</strong>
+          <span>可提交材料进入人工复核流程。</span>
+        </div>
+        <button class="btn-primary" @click="handleAppeal">发起申诉</button>
+      </section>
       <section class="panel detail-block">
         <h3>违法基本信息</h3>
         <div class="info-grid">

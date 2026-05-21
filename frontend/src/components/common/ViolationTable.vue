@@ -8,7 +8,7 @@ defineProps({
   mode: { type: String, default: 'user' },
 });
 
-const emit = defineEmits(['view', 'approve', 'misreport', 'change-punishment']);
+const emit = defineEmits(['view', 'appeal', 'approve', 'misreport', 'change-punishment']);
 </script>
 
 <template>
@@ -27,6 +27,7 @@ const emit = defineEmits(['view', 'approve', 'misreport', 'change-punishment']);
           <template v-else-if="col.key === 'actions'">
             <div class="table-actions">
               <button class="btn-link" @click="emit('view', row)">查看详情</button>
+              <button v-if="mode === 'user'" class="btn-link" @click="emit('appeal', row)">发起申诉</button>
               <template v-if="mode === 'admin'">
                 <button class="btn-link" @click="emit('approve', row)">审核通过</button>
                 <button class="btn-link" @click="emit('misreport', row)">标记误报</button>

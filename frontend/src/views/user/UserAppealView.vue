@@ -1,12 +1,21 @@
 <script setup>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 import PageHeader from '../../components/common/PageHeader.vue';
 import UserLayout from '../../components/layout/UserLayout.vue';
+
+const route = useRoute();
+const violationId = computed(() => route.query.violationId || '');
 </script>
 
 <template>
   <UserLayout>
     <div class="inner-page">
       <PageHeader title="申诉服务" :links="[{ label: '我的违法记录', to: '/user/violations' }, { label: '返回首页', to: '/' }]" />
+      <section v-if="violationId" class="panel appeal-target">
+        <h3>当前申诉记录</h3>
+        <p>违法编号：<strong>{{ violationId }}</strong></p>
+      </section>
       <section class="panel">
         <h3>申诉提交说明</h3>
         <ul>

@@ -1,5 +1,7 @@
 import { violationMockList } from '../mock/violationMock';
 
+const appealRecords = [];
+
 export function getUserViolationList(userId) {
   return Promise.resolve(violationMockList.filter((item) => item.userId === userId));
 }
@@ -25,4 +27,14 @@ export function getAdminViolationDetail(id) {
 
 export function getAdminViolationList() {
   return Promise.resolve(violationMockList);
+}
+
+export function submitViolationAppeal(payload) {
+  const record = {
+    id: `APL-${Date.now()}`,
+    createdAt: new Date().toISOString(),
+    ...payload,
+  };
+  appealRecords.push(record);
+  return Promise.resolve(record);
 }
