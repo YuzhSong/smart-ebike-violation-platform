@@ -23,7 +23,9 @@
 3. `docs/product.md`：产品目标、用户角色和核心流程。
 4. `docs/architecture.md`：模块职责和调用链路。
 5. `docs/api.md`：接口契约。
-6. `docs/deployment.md`：本地启动和联调说明。
+6. `docs/backend-requirements.md`：后端开发需求、接口实现和验收标准。
+7. `docs/database-design.md`：数据库表结构、字段含义和入库规则。
+8. `docs/deployment.md`：本地启动和联调说明。
 
 使用 Codex 辅助开发时，请阅读 `docs/ai-codex-prompt.md`。
 

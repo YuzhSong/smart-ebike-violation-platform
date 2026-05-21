@@ -378,7 +378,30 @@ GET /api/user/violations?userId=1
         "type": "逆行",
         "count": 23
       }
+    ],
+    "statusDistribution": [
+      {
+        "status": "PENDING",
+        "count": 60
+      },
+      {
+        "status": "REVIEWING",
+        "count": 30
+      },
+      {
+        "status": "CONFIRMED",
+        "count": 38
+      }
     ]
   }
 }
 ```
+
+返回字段说明：
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `totalViolations` | number | 违规事件总数 |
+| `todayViolations` | number | 当天违规事件数量 |
+| `typeDistribution` | array | 按违法类型分组统计 |
+| `statusDistribution` | array | 按事件状态分组统计 |

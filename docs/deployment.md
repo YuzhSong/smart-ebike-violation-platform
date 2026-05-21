@@ -45,6 +45,8 @@ mvn spring-boot:run
 - 必需环境变量。
 - 常见启动失败原因。
 
+后端具体交付物、建议工程结构和验收方式见 `docs/backend-requirements.md`。
+
 ## 4. model-service
 
 ```bash

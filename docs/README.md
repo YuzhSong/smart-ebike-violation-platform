@@ -15,19 +15,35 @@
 - 涉及业务功能、页面流程、用户角色：阅读 `docs/product.md`。
 - 涉及模块职责、调用链路、前后端联调：阅读 `docs/architecture.md`。
 - 涉及接口新增、修改、联调：阅读 `docs/api.md`。
-- 涉及数据库表结构、初始化数据：阅读 `database/README.md`、`database/schema.sql`、`database/init_data.sql`。
+- 涉及后端工程、接口实现、模型服务调用：阅读 `docs/backend-requirements.md`。
+- 涉及数据库表结构、初始化数据：阅读 `docs/database-design.md`、`database/README.md`、`database/schema.sql`、`database/init_data.sql`。
 - 涉及本地启动、环境配置、部署演示：阅读 `docs/deployment.md`。
 - 使用 Codex 辅助开发：阅读 `docs/ai-codex-prompt.md`。
 - 安排阶段任务或验收进度：阅读 `docs/development-plan.md`。
 
-## 3. 文档维护规则
+## 3. 后端/数据库负责人阅读顺序
+
+后端和数据库负责人开发前建议按以下顺序阅读：
+
+1. `README.md`
+2. `docs/README.md`
+3. `docs/collaboration.md`
+4. `docs/product.md`
+5. `docs/architecture.md`
+6. `docs/api.md`
+7. `docs/backend-requirements.md`
+8. `docs/database-design.md`
+9. `docs/deployment.md`
+10. `docs/development-plan.md`
+
+## 4. 文档维护规则
 
 - 修改接口、数据结构、启动方式或模块职责时，必须同步更新对应文档。
 - 修改 `docs`、`README.md`、`.gitignore`、`database` 等公共内容前，需要先确认影响范围。
 - 文档中出现“当前版本”“后续”等状态描述时，应尽量写清楚当前是否可运行、是否已实现、是否只是计划。
 - 每次较大文档调整后，应在提交说明中列出影响的文档和调整原因。
 
-## 4. 推荐开发前检查
+## 5. 推荐开发前检查
 
 ```text
 1. 我是否读过 README.md、docs/README.md、docs/collaboration.md？
