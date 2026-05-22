@@ -31,8 +31,19 @@ CREATE TABLE IF NOT EXISTS violation_event (
     violation_type VARCHAR(128) NOT NULL,
     event_time DATETIME NOT NULL,
     status VARCHAR(32) NOT NULL DEFAULT 'PENDING',
+    remark VARCHAR(255) NULL,
+    confidence DECIMAL(5,4) NULL,
+    bbox VARCHAR(255) NULL,
+    model_result TEXT NULL,
     image_url VARCHAR(255) NULL,
+    review_time DATETIME NULL,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_violation_user FOREIGN KEY (user_id) REFERENCES user_info(id),
     CONSTRAINT fk_violation_device FOREIGN KEY (device_id) REFERENCES device_info(id)
 );
+
+CREATE INDEX idx_violation_user_id ON violation_event(user_id);
+CREATE INDEX idx_violation_device_id ON violation_event(device_id);
+CREATE INDEX idx_violation_status ON violation_event(status);
+CREATE INDEX idx_violation_event_time ON violation_event(event_time);
