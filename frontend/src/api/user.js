@@ -1,9 +1,14 @@
-import { currentUserMock, userListMock } from '../mock/userMock';
+const DEMO_USER_ID = Number(import.meta.env.VITE_DEMO_USER_ID || 1);
 
-export function getCurrentUser() {
-  return Promise.resolve(currentUserMock);
+export async function getCurrentUser() {
+  return {
+    id: DEMO_USER_ID,
+    name: `用户 #${DEMO_USER_ID}`,
+    role: 'user',
+    region: '-',
+  };
 }
 
-export function getUserList() {
-  return Promise.resolve(userListMock);
+export async function getUserList() {
+  return [];
 }

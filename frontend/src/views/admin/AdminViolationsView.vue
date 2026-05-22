@@ -1,13 +1,14 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { getAdminViolationList } from '../../api/violation';
+import { getAdminViolationList, updateViolationStatus } from '../../api/violation';
 import PageHeader from '../../components/common/PageHeader.vue';
 import ViolationTable from '../../components/common/ViolationTable.vue';
 import AdminLayout from '../../components/layout/AdminLayout.vue';
 
 const router = useRouter();
 const rows = ref([]);
+const loading = ref(false);
 const columns = [
   { key: 'id', label: '事件编号' },
   { key: 'type', label: '违法类型' },
@@ -20,23 +21,34 @@ const columns = [
   { key: 'actions', label: '操作' },
 ];
 
-onMounted(async () => {
+async function loadRows() {
+  loading.value = true;
   const list = await getAdminViolationList();
-  rows.value = list.map((item) => ({ ...item, confidenceText: `${(item.confidence * 100).toFixed(1)}%` }));
-});
+  rows.value = list.map((item) => ({
+    ...item,
+    confidenceText: item.confidence == null ? '-' : `${(item.confidence * 100).toFixed(1)}%`,
+  }));
+  loading.value = false;
+}
+
+onMounted(loadRows);
 
 function handleView(row) {
-  // 管理端查看详情应进入管理端详情页
   router.push(`/admin/violations/${row.id}`);
 }
-function handleApprove(row) {
-  window.alert(`事件 ${row.id} 已标记为审核通过（前端演示）`);
+
+async function handleApprove(row) {
+  await updateViolationStatus(row.id, 'CONFIRMED', '审核通过');
+  await loadRows();
 }
-function handleMisreport(row) {
-  window.alert(`事件 ${row.id} 已标记为误报（前端演示）`);
+
+async function handleMisreport(row) {
+  await updateViolationStatus(row.id, 'REJECTED', '标记误报');
+  await loadRows();
 }
+
 function handleChangePunishment(row) {
-  window.alert(`事件 ${row.id} 进入处罚调整流程（前端演示）`);
+  router.push(`/admin/violations/${row.id}`);
 }
 </script>
 
@@ -45,7 +57,9 @@ function handleChangePunishment(row) {
     <div class="inner-page">
       <PageHeader title="违法事件管理" :links="[{ label: '返回控制台', to: '/admin' }]" />
       <section class="panel">
+        <p v-if="loading" class="muted-text">正在加载违法事件...</p>
         <ViolationTable
+          v-else
           mode="admin"
           :columns="columns"
           :rows="rows"
