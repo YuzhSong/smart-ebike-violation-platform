@@ -2,6 +2,7 @@ node_modules/
 dist/
 .env
 .env.*
+!ai-service/.env.example
 *.log
 .idea/
 .vscode/
@@ -16,3 +17,8 @@ venv/
 *.onnx
 *.engine
 application-dev.yml
+ai-service/models/*
+!ai-service/models/.gitkeep
+uploads/
+outputs/
+runs/

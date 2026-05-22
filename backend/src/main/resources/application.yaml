@@ -16,9 +16,9 @@ spring:
     open-in-view: false
   servlet:
     multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
+      max-file-size: ${MAX_FILE_SIZE:500MB}
+      max-request-size: ${MAX_REQUEST_SIZE:500MB}
 
 app:
   upload-dir: ${UPLOAD_DIR:uploads}
-  model-service-url: ${MODEL_SERVICE_URL:http://localhost:8000/detect}
+  ai-service-url: ${AI_SERVICE_URL:http://127.0.0.1:8000}

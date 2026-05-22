@@ -25,66 +25,97 @@ import java.util.List;
 public class ModelDetectService {
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper;
-    private final String modelServiceUrl;
+    private final String aiServiceUrl;
 
     public ModelDetectService(
             ObjectMapper objectMapper,
-            @Value("${app.model-service-url:http://localhost:8000/detect}") String modelServiceUrl
+            @Value("${app.ai-service-url:http://127.0.0.1:8000}") String aiServiceUrl
     ) {
         this.objectMapper = objectMapper;
-        this.modelServiceUrl = modelServiceUrl;
+        this.aiServiceUrl = trimTrailingSlash(aiServiceUrl);
     }
 
     /**
-     * 调用模型服务 /detect，并把模型返回的 JSON 转换成后端可落库的识别结果。
-     *
-     * @param image 待识别图片
-     * @return 第一条识别结果和模型原始响应
-     * @throws BizException 图片读取失败、模型服务不可用或返回结果不符合契约时抛出
+     * Call the AI service image endpoint and convert the first detection into the
+     * backend event fields currently stored by DeviceReportService.
      */
     public DetectResult detect(MultipartFile image) {
         try {
-            ByteArrayResource fileResource = new ByteArrayResource(image.getBytes()) {
-                @Override
-                public String getFilename() {
-                    return image.getOriginalFilename() == null ? "capture.jpg" : image.getOriginalFilename();
-                }
-            };
-
-            MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-            body.add("file", fileResource);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-            String rawResponse = restTemplate.postForObject(
-                    modelServiceUrl,
-                    new HttpEntity<>(body, headers),
-                    String.class
-            );
+            String rawResponse = postFile(endpoint("/detect/image"), image);
             if (rawResponse == null || rawResponse.isBlank()) {
-                throw new BizException(500, "model service returned empty result");
+                throw new BizException(500, "AI service returned empty result");
             }
             return parse(rawResponse);
         } catch (IOException e) {
             throw new BizException(500, "failed to read upload image");
         } catch (RestClientException e) {
-            throw new BizException(500, "model service unavailable");
+            throw new BizException(500, "AI service unavailable");
         }
     }
 
-    // 中文注释：当前后端只取第一条检测结果入库，因此这里校验 result[0] 的必需字段。
+    public JsonNode detectVideo(MultipartFile video) {
+        try {
+            String rawResponse = postFile(endpoint("/detect/video"), video);
+            if (rawResponse == null || rawResponse.isBlank()) {
+                throw new BizException(500, "AI service returned empty result");
+            }
+            return objectMapper.readTree(rawResponse);
+        } catch (IOException e) {
+            throw new BizException(500, "failed to read upload video");
+        } catch (RestClientException e) {
+            throw new BizException(500, "AI service unavailable");
+        }
+    }
+
+    private String postFile(String url, MultipartFile file) throws IOException {
+        ByteArrayResource fileResource = new ByteArrayResource(file.getBytes()) {
+            @Override
+            public String getFilename() {
+                return file.getOriginalFilename() == null ? "upload.bin" : file.getOriginalFilename();
+            }
+        };
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("file", fileResource);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        return restTemplate.postForObject(
+                url,
+                new HttpEntity<>(body, headers),
+                String.class
+        );
+    }
+
+    private String endpoint(String path) {
+        return aiServiceUrl + path;
+    }
+
+    private String trimTrailingSlash(String value) {
+        if (value == null || value.isBlank()) {
+            return "http://127.0.0.1:8000";
+        }
+        return value.endsWith("/") ? value.substring(0, value.length() - 1) : value;
+    }
+
+    // The current persistence flow stores one violation event per device report, so
+    // this adapter validates and returns the first AI detection.
     private DetectResult parse(String rawResponse) throws IOException {
         JsonNode root = objectMapper.readTree(rawResponse);
-        JsonNode resultArray = root.path("result");
-        if (!resultArray.isArray() || resultArray.isEmpty()) {
-            throw new BizException(500, "model service returned no detection result");
+        if (!root.path("success").asBoolean(false)) {
+            throw new BizException(500, "AI service returned unsuccessful result");
         }
 
-        JsonNode first = resultArray.get(0);
-        String label = first.path("label").asText(null);
+        JsonNode detections = root.path("detections");
+        if (!detections.isArray() || detections.isEmpty()) {
+            throw new BizException(500, "AI service returned no detection result");
+        }
+
+        JsonNode first = detections.get(0);
+        String label = first.path("class_name").asText(null);
         if (label == null || label.isBlank()) {
-            throw new BizException(500, "model service result missing label");
+            throw new BizException(500, "AI service result missing class_name");
         }
 
         BigDecimal confidence = first.hasNonNull("confidence")
