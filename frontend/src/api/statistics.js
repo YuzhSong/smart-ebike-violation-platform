@@ -49,6 +49,41 @@ export async function getViolationTrend7d() {
   return stats.trend || [];
 }
 
+function formatDate(date) {
+  const y = date.getFullYear();
+  const m = `${date.getMonth() + 1}`.padStart(2, '0');
+  const d = `${date.getDate()}`.padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+export async function getViolationTrend12m() {
+  const now = new Date();
+  const monthRanges = Array.from({ length: 12 }, (_, idx) => {
+    const offset = 11 - idx;
+    const firstDay = new Date(now.getFullYear(), now.getMonth() - offset, 1);
+    const lastDay = new Date(now.getFullYear(), now.getMonth() - offset + 1, 0);
+    return {
+      label: `${firstDay.getMonth() + 1}月`,
+      startDate: formatDate(firstDay),
+      endDate: formatDate(lastDay),
+    };
+  });
+
+  const statsList = await Promise.all(
+    monthRanges.map((range) =>
+      getStatistics({
+        startDate: range.startDate,
+        endDate: range.endDate,
+      })
+    )
+  );
+
+  return monthRanges.map((range, index) => ({
+    month: range.label,
+    count: Number(statsList[index]?.totalViolations || 0),
+  }));
+}
+
 export async function getLocationRanking() {
   const stats = await getStatistics();
   return stats.locationRanking || [];
