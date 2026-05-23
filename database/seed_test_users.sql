@@ -27,10 +27,20 @@ username = VALUES(username),
 phone = VALUES(phone),
 status = VALUES(status);
 
-UPDATE violation_event
-SET user_id = 9101 + ((id - 100001) % 15)
-WHERE id BETWEEN 100001 AND 100100
-  AND remark LIKE '[DEMO_TEST_DATA]%';
+-- Randomized user assignment for demo violations.
+-- Each event is assigned to a random demo user.
+UPDATE violation_event ve
+JOIN (
+    SELECT
+        id,
+        9101 + FLOOR(RAND() * 15) AS random_user_id
+    FROM violation_event
+    WHERE id BETWEEN 100001 AND 100100
+      AND remark LIKE '[DEMO_TEST_DATA]%'
+) r ON r.id = ve.id
+SET ve.user_id = r.random_user_id
+WHERE ve.id BETWEEN 100001 AND 100100
+  AND ve.remark LIKE '[DEMO_TEST_DATA]%';
 
 SELECT id, account, username, phone, status
 FROM user_info
