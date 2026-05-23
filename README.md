@@ -9,8 +9,8 @@
 ## 系统模块
 
 - `frontend`：Vue3 + Vite 前端。
-- `backend`：Spring Boot 后端，当前仍是占位状态，待初始化完整工程。
-- `model-service`：Python YOLOv8 模型服务。
+- `backend`：Spring Boot 后端，提供业务接口、数据库访问、文件上传和 AI 服务调用。
+- `ai-service`：本地 FastAPI + YOLOv8 推理服务。
 - `database`：MySQL 建表与初始化数据。
 - `docs`：产品说明、接口契约、协作规范和部署说明。
 
@@ -32,6 +32,6 @@
 ## 当前状态
 
 - 前端目录已存在，可按 `docs/deployment.md` 启动。
-- 模型服务目录已存在，可按 `docs/deployment.md` 启动。
+- 后端 Spring Boot 工程已初始化，可按 `docs/deployment.md` 启动。
+- AI 推理服务在 `ai-service` 中实现，默认本地地址为 `http://127.0.0.1:8000`。
 - 数据库脚本已存在，可按 `database/README.md` 和 `docs/deployment.md` 初始化。
-- 后端目录当前尚未初始化完整 Spring Boot 工程。

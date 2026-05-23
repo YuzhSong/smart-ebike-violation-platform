@@ -1,6 +1,6 @@
 # 数据库设计说明
 
-本文档面向数据库和后端负责人，说明当前版本 MySQL 表结构、字段含义、接口对应关系和建议补充字段。实际脚本以 `database/schema.sql` 为准，修改表结构时必须同步更新本文档。
+本文档面向数据库和后端负责人，说明当前版本 MySQL 表结构、字段含义、接口对应关系和入库规则。实际脚本以 `database/schema.sql` 为准，修改表结构时必须同步更新本文档。
 
 ## 1. 数据库基本信息
 
@@ -16,7 +16,7 @@
 | 表名 | 用途 |
 | --- | --- |
 | `user_info` | 普通用户信息，用于用户端违法记录查询 |
-| `admin_info` | 管理员信息，当前版本可只作为演示数据 |
+| `admin_info` | 管理员信息，当前版本保留为演示数据 |
 | `device_info` | 设备信息，用于设备上报和设备列表 |
 | `violation_event` | 违法事件主表，用于列表、详情、审核、统计 |
 
@@ -27,8 +27,13 @@
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
 | `id` | BIGINT | 主键 |
+| `account` | VARCHAR(64) | 登录账号，唯一 |
+| `password_hash` | VARCHAR(255) | PBKDF2 密码哈希 |
 | `username` | VARCHAR(64) | 用户名 |
-| `phone` | VARCHAR(20) | 手机号 |
+| `phone` | VARCHAR(20) | 手机号，唯一 |
+| `status` | VARCHAR(32) | 用户状态，例如 `ACTIVE` |
+| `last_login_at` | DATETIME | 最近登录时间 |
+| `updated_at` | DATETIME | 更新时间 |
 | `created_at` | DATETIME | 创建时间 |
 
 关联接口：
@@ -36,23 +41,20 @@
 - `GET /api/user/violations?userId=1`
 - `GET /api/user/violations/{id}`
 - `GET /api/admin/violations/{id}`
+- `POST /api/auth/login`
+- `GET /api/admin/users`
 
 ## 4. admin_info
 
-保存管理员信息。当前版本不要求实现完整登录，因此可以只保留初始化账号。
+保存管理员信息。当前版本普通用户登录使用 `user_info`，`admin_info` 保留为演示数据。
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
 | `id` | BIGINT | 主键 |
 | `admin_name` | VARCHAR(64) | 管理员名称 |
 | `account` | VARCHAR(64) | 登录账号，唯一 |
-| `password_hash` | VARCHAR(128) | 密码哈希或占位值 |
+| `password_hash` | VARCHAR(128) | 密码哈希或演示值 |
 | `created_at` | DATETIME | 创建时间 |
-
-当前版本说明：
-
-- 不要求实现登录鉴权。
-- 如果后续实现登录，必须补充登录接口和权限说明。
 
 ## 5. device_info
 
@@ -77,7 +79,7 @@
 
 违法事件主表，是当前版本最核心的数据表。
 
-### 6.1 当前已有字段
+### 6.1 当前字段
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
@@ -87,28 +89,16 @@
 | `violation_type` | VARCHAR(128) | 违法类型 |
 | `event_time` | DATETIME | 事件发生时间 |
 | `status` | VARCHAR(32) | 事件状态 |
+| `remark` | VARCHAR(255) NULL | 管理员审核备注 |
+| `confidence` | DECIMAL(5,4) NULL | AI 识别置信度 |
+| `bbox` | VARCHAR(255) NULL | 检测框，保存 JSON 字符串，例如 `[128,64,320,280]` |
+| `model_result` | TEXT NULL | AI 服务原始返回结果，便于调试和演示 |
 | `image_url` | VARCHAR(255) | 图片访问路径或相对路径 |
+| `review_time` | DATETIME NULL | 管理员审核时间 |
+| `updated_at` | DATETIME | 更新时间 |
 | `created_at` | DATETIME | 创建时间 |
 
-### 6.2 建议补充字段
-
-为了和接口、审核、模型识别结果对齐，建议在 `violation_event` 中补充：
-
-| 字段 | 建议类型 | 说明 |
-| --- | --- | --- |
-| `remark` | VARCHAR(255) NULL | 管理员审核备注 |
-| `review_time` | DATETIME NULL | 管理员审核时间 |
-| `confidence` | DECIMAL(5,4) NULL | 模型识别置信度 |
-| `bbox` | VARCHAR(255) NULL | 检测框，保存 JSON 字符串，例如 `[128,64,320,280]` |
-| `model_result` | TEXT NULL | 模型原始返回结果，便于调试和演示 |
-
-建议更新后的表结构应支持：
-
-- 管理员状态更新接口保存 `remark`。
-- 设备上报接口保存模型识别结果。
-- 后续排查模型识别问题时查看原始结果。
-
-### 6.3 状态枚举
+### 6.2 状态枚举
 
 | 状态 | 说明 |
 | --- | --- |
@@ -117,7 +107,7 @@
 | `CONFIRMED` | 已确认违法 |
 | `REJECTED` | 已驳回 |
 
-### 6.4 违法类型
+### 6.3 违法类型
 
 当前演示数据建议使用：
 
@@ -148,13 +138,13 @@
 | --- | --- |
 | `user_id` | 当前版本可为空 |
 | `device_id` | 根据 `deviceCode` 查询 `device_info.id` |
-| `violation_type` | 模型返回的 `label` |
+| `violation_type` | AI 服务返回的 `class_name` |
 | `event_time` | 请求参数 `captureTime` |
 | `status` | 默认 `PENDING` |
 | `image_url` | 后端保存图片后的路径 |
-| `confidence` | 模型返回的 `confidence` |
-| `bbox` | 模型返回的 `bbox` JSON 字符串 |
-| `model_result` | 模型完整返回 JSON |
+| `confidence` | AI 服务返回的 `confidence` |
+| `bbox` | AI 服务返回的 `bbox` JSON 字符串 |
+| `model_result` | AI 服务完整返回 JSON |
 
 ## 9. 初始化数据要求
 

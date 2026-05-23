@@ -8,7 +8,7 @@
 | --- | --- |
 | frontend | Node.js、npm |
 | backend | JDK、Maven、Spring Boot 工程结构 |
-| model-service | Python、pip |
+| ai-service | Python、pip、YOLOv8 权重文件 |
 | database | MySQL 8.0 |
 
 ## 2. frontend
@@ -29,39 +29,47 @@ http://localhost:5173
 
 ## 3. backend
 
-当前 `backend` 目录仍是占位状态，尚未初始化完整 Spring Boot 工程，因此以下命令只有在后端工程补齐后才能运行：
+当前 `backend` 已初始化为 Spring Boot 工程。默认端口为 `8080`，数据库和 AI 服务地址可通过环境变量覆盖。
 
 ```bash
 cd backend
 mvn spring-boot:run
 ```
 
-后端初始化完成后，应补充：
+常用配置项：
 
-- JDK 版本。
-- Maven 版本。
-- 服务端口。
-- 数据库连接配置位置。
-- 必需环境变量。
-- 常见启动失败原因。
+- `SERVER_PORT`：后端端口，默认 `8080`。
+- `DB_URL`：MySQL 连接地址，默认连接 `traffic_platform`。
+- `DB_USERNAME`：数据库用户名，默认 `root`。
+- `DB_PASSWORD`：数据库密码，默认 `123456`。
+- `UPLOAD_DIR`：设备图片保存目录，默认 `uploads`。
+- `AI_SERVICE_URL`：本地 AI 推理服务地址，默认 `http://127.0.0.1:8000`。
 
-后端具体交付物、建议工程结构和验收方式见 `docs/backend-requirements.md`。
+后端具体交付物和验收方式见 `docs/backend-requirements.md`。
 
-## 4. model-service
+## 4. ai-service
 
 ```bash
-cd model-service
+cd ai-service
 pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+uvicorn app:app --host 127.0.0.1 --port 8000
 ```
 
-模型服务识别接口：
+AI 推理服务接口：
 
 ```text
-POST http://localhost:8000/detect
+GET  http://127.0.0.1:8000/health
+POST http://127.0.0.1:8000/detect/image
+POST http://127.0.0.1:8000/detect/video
 ```
 
-如果后续使用真实 YOLOv8 权重，需要确认 `model-service/weights` 中的权重文件路径，并在模型服务代码或配置中同步说明。
+模型权重默认放在：
+
+```text
+ai-service/models/best.pt
+```
+
+如果权重放在其他本地路径，可以通过 `MODEL_PATH` 指定。模型文件不提交到仓库。
 
 ## 5. database
 
@@ -76,19 +84,17 @@ POST http://localhost:8000/detect
 完整联调时建议按以下顺序启动：
 
 1. 启动 MySQL，并确认数据库和初始化数据可用。
-2. 启动 model-service，确认 `/detect` 可访问。
-3. 启动 backend，确认能连接数据库和模型服务。
+2. 启动 ai-service，确认 `/health` 和 `/detect/image` 可访问。
+3. 启动 backend，确认能连接数据库和 AI 推理服务。
 4. 启动 frontend，进行页面联调。
-
-当前由于 `backend` 尚未初始化完整工程，只能先分别验证 `frontend`、`model-service` 和 `database`。
 
 ## 7. 联调检查项
 
 ```text
 1. 前端页面是否能启动？
 2. 数据库脚本是否能完整执行？
-3. 模型服务 /detect 是否能返回识别结果？
-4. 后端是否已初始化并能连接数据库？
+3. AI 推理服务 /detect/image 是否能返回识别结果？
+4. 后端是否能连接数据库？
 5. 后端接口返回是否符合 docs/api.md？
 6. 前端接口地址是否指向正确后端端口？
 ```

@@ -18,7 +18,7 @@
 项目启动或分工调整时，应填写并维护以下映射：
 
 ```text
-成员A（YuzhSong）负责目录：<frontend、model-service、docs、README.md>
+成员A（YuzhSong）负责目录：<frontend、ai-service、docs、README.md>
 成员B（7nfc）负责目录：<backend、database>
 共同维护目录：.gitignore
 ```

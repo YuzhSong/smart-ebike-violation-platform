@@ -49,13 +49,13 @@ public class DeviceReportService {
     }
 
     /**
-     * 处理设备上报图片：校验设备和抓拍参数，调用模型服务识别，保存图片并生成待处理违法事件。
+     * 处理设备上报图片：校验设备和抓拍参数，调用 AI 推理服务识别，保存图片并生成待处理违法事件。
      *
      * @param deviceCode 设备编号，必须能在 device_info 中查到
      * @param captureTime 抓拍时间
      * @param image 抓拍图片文件
      * @return 新增违法事件 ID
-     * @throws BizException 参数缺失、设备不存在、模型服务异常或图片保存失败时抛出
+     * @throws BizException 参数缺失、设备不存在、AI 推理服务异常或图片保存失败时抛出
      */
     @Transactional
     public DeviceReportResultDto report(String deviceCode, LocalDateTime captureTime, MultipartFile image) {

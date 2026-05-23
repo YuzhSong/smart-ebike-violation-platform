@@ -4,7 +4,7 @@
 
 ## 1. 必读文档
 
-无论负责前端、后端、模型服务还是数据库，开发前都必须先阅读：
+无论负责前端、后端、AI 推理服务还是数据库，开发前都必须先阅读：
 
 1. `README.md`：项目总体目标和模块划分。
 2. `docs/README.md`：文档入口和阅读顺序。
@@ -15,7 +15,7 @@
 - 涉及业务功能、页面流程、用户角色：阅读 `docs/product.md`。
 - 涉及模块职责、调用链路、前后端联调：阅读 `docs/architecture.md`。
 - 涉及接口新增、修改、联调：阅读 `docs/api.md`。
-- 涉及后端工程、接口实现、模型服务调用：阅读 `docs/backend-requirements.md`。
+- 涉及后端工程、接口实现、AI 推理服务调用：阅读 `docs/backend-requirements.md`。
 - 涉及数据库表结构、初始化数据：阅读 `docs/database-design.md`、`database/README.md`、`database/schema.sql`、`database/init_data.sql`。
 - 涉及本地启动、环境配置、部署演示：阅读 `docs/deployment.md`。
 - 使用 Codex 辅助开发：阅读 `docs/ai-codex-prompt.md`。

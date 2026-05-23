@@ -13,7 +13,7 @@
 
 设备上报图片
   -> 后端接收文件
-  -> 调用模型服务 /detect
+  -> 调用 ai-service /detect/image
   -> 生成违法事件
   -> MySQL
 ```
@@ -25,14 +25,14 @@
 | 类型 | 交付物 | 验收标准 |
 | --- | --- | --- |
 | 工程骨架 | Spring Boot 工程、启动类、Maven 配置 | 在 `backend` 目录执行 `mvn spring-boot:run` 可启动 |
-| 配置 | 服务端口、数据库连接、模型服务地址、文件上传路径 | 配置项集中在配置文件中，能按本地环境修改 |
+| 配置 | 服务端口、数据库连接、AI 服务地址、文件上传路径 | 配置项集中在配置文件中，能按本地环境修改 |
 | 统一响应 | `ApiResponse` 或等价结构 | 返回格式符合 `docs/api.md` |
 | 异常处理 | 参数错误、数据不存在、服务异常 | 错误码符合 `docs/api.md` 的通用约定 |
 | 跨域配置 | 允许前端本地开发访问 | 前端 Vite 服务能调用后端接口 |
 | 数据访问 | 用户、管理员、设备、违法事件表访问 | 能查询和更新 MySQL 数据 |
-| 模型调用 | 调用 `http://localhost:8000/detect` | 设备上报时能获取识别结果或返回明确错误 |
+| AI 调用 | 调用 `http://127.0.0.1:8000/detect/image` | 设备上报时能获取识别结果或返回明确错误 |
 | 文件上传 | 接收设备图片并保存路径 | 违法事件中能保存可展示的 `imageUrl` |
-| 接口实现 | `docs/api.md` 中除模型服务外的后端接口 | 接口路径、方法、字段与文档一致 |
+| 接口实现 | `docs/api.md` 中除 AI 推理服务外的后端接口 | 接口路径、方法、字段与文档一致 |
 | 启动说明 | 更新 `docs/deployment.md` 中后端部分 | 说明 JDK、Maven、端口、数据库配置 |
 
 ## 3. 建议工程结构
@@ -89,7 +89,7 @@ backend/
 | 管理员查询违规列表 | `GET` | `/api/admin/violations` | `violation_event` |
 | 管理员查询违规详情 | `GET` | `/api/admin/violations/{id}` | `violation_event`、`user_info`、`device_info` |
 | 更新违规状态 | `PUT` | `/api/admin/violations/{id}/status` | 更新 `violation_event` |
-| 设备上报事件 | `POST` | `/api/device/report` | `device_info`、模型服务、`violation_event` |
+| 设备上报事件 | `POST` | `/api/device/report` | `device_info`、AI 推理服务、`violation_event` |
 | 查询设备列表 | `GET` | `/api/admin/devices` | `device_info` |
 | 查询统计数据 | `GET` | `/api/admin/statistics` | `violation_event` |
 
@@ -102,13 +102,13 @@ backend/
 1. 根据 `deviceCode` 查询 `device_info`。
 2. 如果设备不存在，返回 `404` 或 `400`，不生成违法事件。
 3. 保存上传图片，生成可访问或可记录的 `imageUrl`。
-4. 调用模型服务 `/detect`，字段为 multipart `file`。
+4. 调用 AI 推理服务 `/detect/image`，字段为 multipart `file`。
 5. 如果模型返回至少一条识别结果，取第一条结果生成违法事件。
 6. 违法事件初始状态为 `PENDING`。
 7. `violation_type` 使用模型返回的 `label`。
 8. `confidence`、`bbox`、`model_result` 按 `docs/database-design.md` 保存。
 9. 当前版本设备上报不绑定具体用户，`user_id` 可以为空。
-10. 如果模型服务不可用，返回明确错误，不写入半成品事件；如需改成“待识别事件”，必须先更新文档。
+10. 如果 AI 推理服务不可用，返回明确错误，不写入半成品事件；如需改成“待识别事件”，必须先更新文档。
 
 ## 6. 图片保存规则
 
@@ -147,7 +147,7 @@ backend/uploads/
 3. GET /api/admin/devices 能返回初始化设备数据。
 4. GET /api/user/violations?userId=1 能返回初始化违法数据。
 5. PUT /api/admin/violations/{id}/status 能更新状态和备注。
-6. POST /api/device/report 能接收图片并生成事件，或在模型服务未启动时返回明确错误。
+6. POST /api/device/report 能接收图片并生成事件，或在 AI 推理服务未启动时返回明确错误。
 7. GET /api/admin/statistics 能返回统计数据。
 ```
 

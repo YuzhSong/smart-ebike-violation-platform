@@ -1,12 +1,12 @@
 # 接口约定文档
 
-本文档是前端、后端、设备端和模型服务之间的接口契约。修改接口路径、请求方法、参数、返回字段或状态枚举时，必须同步更新本文档。
+本文档是前端、后端、设备端和本地 AI 推理服务之间的接口契约。修改接口路径、请求方法、参数、返回字段或状态枚举时，必须同步更新本文档。
 
 ## 1. 通用约定
 
 ### 1.1 后端统一响应格式
 
-除模型服务接口外，后端业务接口统一返回：
+除 AI 推理服务接口外，后端业务接口统一返回：
 
 ```json
 {
@@ -28,7 +28,7 @@
 | --- | --- |
 | `200` | 成功 |
 | `400` | 请求参数错误 |
-| `401` | 未登录或无访问权限，当前版本可暂不实现 |
+| `401` | 未登录、无访问权限或账号密码错误 |
 | `404` | 数据不存在 |
 | `500` | 服务端异常 |
 
@@ -266,13 +266,13 @@ GET /api/user/violations?userId=1
 }
 ```
 
-## 5. 模型服务接口
+## 5. AI 推理服务接口
 
 ### 5.1 图像识别
 
-- 用途：调用模型服务进行违规行为识别。
+- 用途：调用本地 AI 推理服务进行违规行为识别。
 - 请求方法：`POST`
-- 路径：`http://localhost:8000/detect`
+- 路径：`http://127.0.0.1:8000/detect/image`
 - Content-Type：`multipart/form-data`
 
 请求参数：
@@ -285,13 +285,13 @@ GET /api/user/violations?userId=1
 
 ```json
 {
-  "message": "mock detect success",
-  "filename": "capture.jpg",
-  "result": [
+  "success": true,
+  "detections": [
     {
-      "label": "未佩戴头盔",
+      "class_id": 2,
+      "class_name": "no-helmet",
       "confidence": 0.93,
-      "bbox": [128, 64, 320, 280]
+      "bbox": [128.0, 64.0, 320.0, 280.0]
     }
   ]
 }
@@ -301,9 +301,36 @@ GET /api/user/violations?userId=1
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
-| `label` | string | 识别出的违法类型 |
+| `class_id` | number | 模型类别 ID |
+| `class_name` | string | 模型类别名称 |
 | `confidence` | number | 置信度，范围 0 到 1 |
 | `bbox` | number[] | 检测框，格式 `[x1, y1, x2, y2]` |
+
+### 5.2 视频上传
+
+- 用途：上传视频文件到本地 AI 推理服务。
+- 请求方法：`POST`
+- 路径：`http://127.0.0.1:8000/detect/video`
+- Content-Type：`multipart/form-data`
+
+请求参数：
+
+| 参数 | 位置 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- | --- |
+| `file` | form | file | 是 | 待处理视频 |
+
+返回示例：
+
+```json
+{
+  "success": true,
+  "task_id": "b7d2c8f0e9a74c11b9dcb1e4a29c8a10",
+  "status": "accepted",
+  "filename": "sample.mp4",
+  "input_path": "ai-service/uploads/b7d2c8f0e9a74c11b9dcb1e4a29c8a10.mp4",
+  "message": "video uploaded; asynchronous processing can be added around this task_id"
+}
+```
 
 ## 6. 设备管理接口
 
@@ -392,6 +419,18 @@ GET /api/user/violations?userId=1
         "status": "CONFIRMED",
         "count": 38
       }
+    ],
+    "trend": [
+      {
+        "day": "05-18",
+        "count": 12
+      }
+    ],
+    "locationRanking": [
+      {
+        "name": "东城区路口A",
+        "count": 23
+      }
     ]
   }
 }
@@ -405,3 +444,97 @@ GET /api/user/violations?userId=1
 | `todayViolations` | number | 当天违规事件数量 |
 | `typeDistribution` | array | 按违法类型分组统计 |
 | `statusDistribution` | array | 按事件状态分组统计 |
+| `trend` | array | 最近 7 天趋势数据 |
+| `locationRanking` | array | 按设备点位统计的排行数据 |
+
+## 8. 登录与用户管理接口
+
+### 8.1 用户登录
+
+- 用途：普通用户登录。
+- 请求方法：`POST`
+- 路径：`/api/auth/login`
+- Content-Type：`application/json`
+
+请求示例：
+
+```json
+{
+  "account": "demo_user_01",
+  "password": "Test@123456"
+}
+```
+
+返回示例：
+
+```json
+{
+  "code": 200,
+  "message": "login success",
+  "data": {
+    "userId": 9101,
+    "account": "demo_user_01",
+    "username": "测试用户01",
+    "phone": "13900009101",
+    "tokenType": "Bearer",
+    "accessToken": "development-token"
+  }
+}
+```
+
+### 8.2 查询用户列表
+
+- 用途：管理员查看用户列表和用户违法统计。
+- 请求方法：`GET`
+- 路径：`/api/admin/users`
+
+返回示例：
+
+```json
+{
+  "code": 200,
+  "message": "success",
+  "data": [
+    {
+      "id": 9101,
+      "account": "demo_user_01",
+      "username": "测试用户01",
+      "phone": "13900009101",
+      "status": "ACTIVE",
+      "violationCount": 3,
+      "latestViolationTime": "2026-05-18 10:20:00",
+      "lastLoginAt": "2026-05-23 10:00:00"
+    }
+  ]
+}
+```
+
+## 9. 后端 AI 转发接口
+
+### 9.1 图片识别转发
+
+- 用途：前端或调试工具通过后端转发图片到本地 AI 推理服务。
+- 请求方法：`POST`
+- 路径：`/api/ai/detect/image`
+- Content-Type：`multipart/form-data`
+
+请求参数：
+
+| 参数 | 位置 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- | --- |
+| `file` | form | file | 是 | 待识别图片 |
+
+返回数据为后端从 AI 服务第一条检测结果转换后的 `label`、`confidence`、`bbox`。
+
+### 9.2 视频识别转发
+
+- 用途：前端或调试工具通过后端转发视频到本地 AI 推理服务。
+- 请求方法：`POST`
+- 路径：`/api/ai/detect/video`
+- Content-Type：`multipart/form-data`
+
+请求参数：
+
+| 参数 | 位置 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- | --- |
+| `file` | form | file | 是 | 待处理视频 |
