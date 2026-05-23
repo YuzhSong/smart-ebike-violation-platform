@@ -17,7 +17,7 @@ const columns = [
   { key: 'confidenceText', label: '识别置信度' },
   { key: 'status', label: '处理状态' },
   { key: 'userName', label: '关联用户' },
-  { key: 'deviceId', label: '设备编号' },
+  { key: 'deviceCode', label: '设备编号' },
   { key: 'actions', label: '操作' },
 ];
 

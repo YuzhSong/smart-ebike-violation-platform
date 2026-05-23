@@ -1,16 +1,36 @@
 <script setup>
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { login } from '../api/auth';
 
 const router = useRouter();
 const route = useRoute();
 const role = ref('user');
 const account = ref('');
 const password = ref('');
+const loading = ref(false);
+const errorMessage = ref('');
 
-function handleLogin() {
-  if (role.value === 'admin') router.push('/admin');
-  else router.push('/user');
+async function handleLogin() {
+  errorMessage.value = '';
+  if (role.value === 'admin') {
+    router.push('/admin');
+    return;
+  }
+  if (!account.value.trim() || !password.value) {
+    errorMessage.value = '请输入账号和密码';
+    return;
+  }
+
+  loading.value = true;
+  try {
+    await login(account.value.trim(), password.value);
+    router.push('/user');
+  } catch (error) {
+    errorMessage.value = error.message || '登录失败';
+  } finally {
+    loading.value = false;
+  }
 }
 
 if (route.query.role === 'admin' || route.query.role === 'user') {
@@ -37,7 +57,10 @@ if (route.query.role === 'admin' || route.query.role === 'user') {
           <option value="user">普通用户</option>
           <option value="admin">管理员</option>
         </select>
-        <button class="btn-primary" @click="handleLogin">登录</button>
+        <p v-if="errorMessage" class="form-error">{{ errorMessage }}</p>
+        <button class="btn-primary" :disabled="loading" @click="handleLogin">
+          {{ loading ? '登录中...' : '登录' }}
+        </button>
       </div>
     </section>
   </div>

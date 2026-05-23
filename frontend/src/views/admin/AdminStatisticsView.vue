@@ -31,16 +31,16 @@ onMounted(async () => {
       <section class="panel-row">
         <section class="panel">
           <h3>违法类型分布</h3>
-          <ul class="rank-list">
-            <li v-for="item in typeList" :key="item.name" class="rank-item">
+          <ul>
+            <li v-for="item in typeList" :key="item.name">
               <span>{{ item.name }}</span><strong>{{ item.count }}</strong>
             </li>
           </ul>
         </section>
         <section class="panel">
           <h3>处理状态统计</h3>
-          <ul class="rank-list">
-            <li v-for="item in processList" :key="item.name" class="rank-item">
+          <ul>
+            <li v-for="item in processList" :key="item.name">
               <span>{{ item.name }}</span><strong>{{ item.value }}</strong>
             </li>
           </ul>

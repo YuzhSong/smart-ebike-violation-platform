@@ -7,16 +7,6 @@ USE traffic_platform;
 --   violation_event.id:  100001-100100
 -- These records are marked with [DEMO_TEST_DATA] so production data can be kept separate.
 
-INSERT INTO user_info (id, username, phone) VALUES
-(9001, 'demo_student_01', '13900009001'),
-(9002, 'demo_student_02', '13900009002'),
-(9003, 'demo_student_03', '13900009003'),
-(9004, 'demo_student_04', '13900009004'),
-(9005, 'demo_student_05', '13900009005')
-ON DUPLICATE KEY UPDATE
-username = VALUES(username),
-phone = VALUES(phone);
-
 INSERT INTO device_info (id, device_code, location_desc, status) VALUES
 (9001, 'DEMO-SCH-EAST-GATE', '学校东门非机动车道', 'ONLINE'),
 (9002, 'DEMO-SCH-SOUTH-GATE', '学校南门公交站旁', 'ONLINE'),
@@ -58,7 +48,7 @@ demo_rows AS (
     SELECT
         n,
         100000 + n AS event_id,
-        CASE WHEN n % 6 = 0 THEN NULL ELSE 9001 + (n % 5) END AS demo_user_id,
+        NULL AS demo_user_id,
         9001 + ((n - 1) % 8) AS demo_device_id,
         CASE n % 5
             WHEN 0 THEN '未佩戴头盔'

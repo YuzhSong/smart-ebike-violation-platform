@@ -16,6 +16,8 @@ const label = computed(() => {
     MAINTENANCE: '维护中',
     NORMAL: '正常',
     FROZEN: '冻结',
+    ACTIVE: '正常',
+    DISABLED: '停用',
   };
   return map[props.status] || props.status;
 });
@@ -31,6 +33,8 @@ const className = computed(() => {
     MAINTENANCE: 'status-maintenance',
     NORMAL: 'status-processed',
     FROZEN: 'status-rejected',
+    ACTIVE: 'status-processed',
+    DISABLED: 'status-rejected',
     未处理: 'status-unprocessed',
     已处理: 'status-processed',
     申诉中: 'status-appealing',

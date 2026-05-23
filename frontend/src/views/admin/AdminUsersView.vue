@@ -24,14 +24,14 @@ function handleAction(action, id) {
         <table class="data-table">
           <thead>
             <tr>
-              <th>用户编号</th><th>姓名</th><th>联系方式</th><th>绑定车辆/非机动车编号</th>
-              <th>违法记录数</th><th>最近违法时间</th><th>用户状态</th><th>操作</th>
+              <th>用户编号</th><th>登录账号</th><th>姓名</th><th>联系方式</th>
+              <th>违法记录数</th><th>最近违法时间</th><th>最近登录</th><th>用户状态</th><th>操作</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="row in rows" :key="row.id">
-              <td>{{ row.id }}</td><td>{{ row.name }}</td><td>{{ row.phone }}</td><td>{{ row.vehicleNo }}</td>
-              <td>{{ row.violationCount }}</td><td>{{ row.latestViolationTime }}</td><td><StatusTag :status="row.status" /></td>
+              <td>{{ row.id }}</td><td>{{ row.account }}</td><td>{{ row.name }}</td><td>{{ row.phone }}</td>
+              <td>{{ row.violationCount }}</td><td>{{ row.latestViolationTime }}</td><td>{{ row.lastLoginAt }}</td><td><StatusTag :status="row.status" /></td>
               <td class="table-actions">
                 <button class="btn-link" @click="handleAction('查看记录', row.id)">查看记录</button>
                 <button class="btn-link" @click="handleAction('编辑信息', row.id)">编辑信息</button>

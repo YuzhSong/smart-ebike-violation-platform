@@ -1,7 +1,10 @@
 <script setup>
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { clearAuthSession } from '../../api/auth';
 import { getCurrentUser } from '../../api/user';
 
+const router = useRouter();
 const menuItems = [
   { label: '个人中心', to: '/user' },
   { label: '我的违法记录', to: '/user/violations' },
@@ -17,7 +20,8 @@ onMounted(async () => {
 });
 
 function logout() {
-  window.alert('已退出登录（前端演示）');
+  clearAuthSession();
+  router.push('/login?role=user');
 }
 </script>
 

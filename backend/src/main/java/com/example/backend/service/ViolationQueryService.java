@@ -102,21 +102,50 @@ public class ViolationQueryService {
     }
 
     private ViolationSummaryDto toSummary(ViolationEvent event) {
-        return new ViolationSummaryDto(event.getId(), event.getViolationType(), event.getEventTime(), event.getStatus());
+        Long userId = event.getUser() == null ? null : event.getUser().getId();
+        String userAccount = event.getUser() == null ? null : event.getUser().getAccount();
+        String username = event.getUser() == null ? null : event.getUser().getUsername();
+        Long deviceId = event.getDevice() == null ? null : event.getDevice().getId();
+        String deviceCode = event.getDevice() == null ? null : event.getDevice().getDeviceCode();
+        String locationDesc = event.getDevice() == null ? null : event.getDevice().getLocationDesc();
+        return new ViolationSummaryDto(
+                event.getId(),
+                userId,
+                userAccount,
+                username,
+                deviceId,
+                deviceCode,
+                locationDesc,
+                event.getViolationType(),
+                event.getEventTime(),
+                event.getStatus(),
+                event.getRemark(),
+                event.getConfidence()
+        );
     }
 
     private ViolationDetailDto toDetail(ViolationEvent event) {
         Long userId = event.getUser() == null ? null : event.getUser().getId();
+        String userAccount = event.getUser() == null ? null : event.getUser().getAccount();
+        String username = event.getUser() == null ? null : event.getUser().getUsername();
         Long deviceId = event.getDevice() == null ? null : event.getDevice().getId();
+        String deviceCode = event.getDevice() == null ? null : event.getDevice().getDeviceCode();
+        String locationDesc = event.getDevice() == null ? null : event.getDevice().getLocationDesc();
         return new ViolationDetailDto(
                 event.getId(),
                 userId,
+                userAccount,
+                username,
                 deviceId,
+                deviceCode,
+                locationDesc,
                 event.getViolationType(),
                 event.getEventTime(),
                 event.getStatus(),
                 event.getImageUrl(),
-                event.getRemark()
+                event.getRemark(),
+                event.getConfidence(),
+                event.getBbox()
         );
     }
 }

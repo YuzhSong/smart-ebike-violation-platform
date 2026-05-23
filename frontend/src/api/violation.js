@@ -13,11 +13,13 @@ function normalizeSummary(item = {}) {
     title: item.violationType || '-',
     type: item.violationType || '-',
     time: item.eventTime || '-',
-    location: item.deviceId ? `设备 #${item.deviceId}` : '-',
-    userName: item.userId ? `用户 #${item.userId}` : '-',
+    location: item.locationDesc || '-',
+    userName: item.username || item.userAccount || (item.userId ? `用户 #${item.userId}` : '-'),
+    userAccount: item.userAccount || '-',
     deviceId: item.deviceId || '-',
+    deviceCode: item.deviceCode || '-',
     statusText: STATUS_TEXT[item.status] || item.status || '-',
-    punishment: item.remark || '-',
+    punishment: punishmentText(item.violationType),
     confidence: item.confidence ?? null,
   };
 }
@@ -28,8 +30,8 @@ function normalizeDetail(item = {}) {
   return {
     ...summary,
     imageUrl,
-    userName: item.userId ? `用户 #${item.userId}` : '-',
-    location: item.deviceId ? `设备 #${item.deviceId}` : '-',
+    userName: item.username || item.userAccount || (item.userId ? `用户 #${item.userId}` : '-'),
+    location: item.locationDesc || '-',
     manualReviewRequired: item.status === 'PENDING' || item.status === 'REVIEWING',
     aiResult: {
       vehicle: '-',
@@ -45,6 +47,17 @@ function normalizeDetail(item = {}) {
       ...(item.remark ? [{ step: '审核备注', time: '-', desc: item.remark }] : []),
     ],
   };
+}
+
+function punishmentText(violationType) {
+  const map = {
+    闯红灯: '罚款 50 元，记违法记录 1 次',
+    逆行: '罚款 30 元，记违法记录 1 次',
+    逆向行驶: '罚款 30 元，记违法记录 1 次',
+    占用机动车道: '警告或罚款 20 元',
+    未佩戴头盔: '警告并责令整改',
+  };
+  return map[violationType] || '按现场审核结果处理';
 }
 
 export async function getUserViolationList(userId) {

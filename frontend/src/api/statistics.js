@@ -31,8 +31,8 @@ export async function getAdminDashboardStats() {
       name: item.type,
       count: item.count,
     })),
-    locationRanking: [],
-    trend: [],
+    locationRanking: stats.locationRanking || [],
+    trend: stats.trend || [],
   };
 }
 
@@ -45,11 +45,13 @@ export async function getViolationTypeDistribution(params = {}) {
 }
 
 export async function getViolationTrend7d() {
-  return [];
+  const stats = await getStatistics();
+  return stats.trend || [];
 }
 
 export async function getLocationRanking() {
-  return [];
+  const stats = await getStatistics();
+  return stats.locationRanking || [];
 }
 
 export async function getProcessStatusStats(params = {}) {
